@@ -1,0 +1,69 @@
+# Kirria for Claude Code
+
+Connects Claude Code to [Kirria](https://kirria.com) over MCP: search your workspace's knowledge, read its wiki, and
+work its Nexus tickets, PRDs, QA and releases.
+
+## Install
+
+In Claude Code:
+
+```
+/plugin marketplace add kirria-mcp/claude-plugin
+/plugin install kirria@kirria
+```
+
+Or from a shell:
+
+```
+claude plugin marketplace add kirria-mcp/claude-plugin
+claude plugin install kirria@kirria
+```
+
+Restart Claude Code after installing.
+
+## Sign in
+
+Run `/mcp`, pick `plugin:kirria:kirria`, and choose **Authenticate**. Your browser opens Kirria's sign-in; approve
+the access you want to grant, and Claude Code stores the token. What the connection can see follows the access you
+approved: knowledge and wiki reads, and Nexus only if you granted it.
+
+If you previously added Kirria by hand (`claude mcp add ... https://app.kirria.com/mcp`), remove that entry with
+`claude mcp remove kirria`. A hand-added server with the same URL takes precedence over the plugin's.
+
+## Turn on auto-update
+
+Claude Code does not auto-update third-party marketplaces by default, so without this you stay on the version you
+installed. Run `/plugin`, open the marketplaces list, select **kirria**, and turn auto-update on. Claude Code then
+picks up new releases at startup. `/status` shows a **Marketplace auto-update** row you can check it against.
+
+To update by hand instead:
+
+```
+claude plugin marketplace update kirria
+claude plugin update kirria@kirria
+```
+
+## Releases
+
+You receive a new version only when a release is cut: the marketplace entry pins the plugin to a release tag, so
+changes merged to `main` reach nobody until then.
+
+To cut release `X.Y.Z`:
+
+1. Tag the `main` commit that holds the release's plugin content, and push the tag:
+
+   ```
+   git tag vX.Y.Z origin/main
+   git push origin vX.Y.Z
+   ```
+
+2. In a pull request, set the entry's `version` to `X.Y.Z` and its `source.ref` to `vX.Y.Z` in
+   `.claude-plugin/marketplace.json`, then merge it. Users receive the release on their next marketplace update.
+
+Tag first: CI fails a marketplace that points at a tag that does not exist yet.
+
+## Layout
+
+- `.claude-plugin/marketplace.json`: the marketplace and its one plugin entry, including the MCP server.
+- `plugin/`: the plugin content (skills, hooks, commands). It has no `plugin.json`; see `plugin/README.md`.
+- `scripts/check-manifests.sh`: the rules `claude plugin validate` does not check. CI runs both on every pull request.

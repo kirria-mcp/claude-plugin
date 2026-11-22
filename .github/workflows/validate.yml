@@ -1,0 +1,26 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # check-manifests.sh needs the release tags
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Pinned so a CLI release cannot change what passes; bump it deliberately.
+      - run: npm install --global @anthropic-ai/claude-code@2.1.330
+      - name: claude plugin validate
+        run: claude plugin validate --strict .
+      - name: manifest rules the validator misses
+        run: bash scripts/check-manifests.sh
