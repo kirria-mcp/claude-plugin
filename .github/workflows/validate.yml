@@ -24,3 +24,7 @@ jobs:
         run: claude plugin validate --strict .
       - name: manifest rules the validator misses
         run: bash scripts/check-manifests.sh
+      - name: test the skill budget check
+        run: bash scripts/check-skills.test.sh
+      - name: skill description budgets and playbook pointers
+        run: bash scripts/check-skills.sh
