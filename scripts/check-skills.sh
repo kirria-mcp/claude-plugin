@@ -8,6 +8,7 @@ export LC_ALL=C.UTF-8 # ${#var} counts characters, not bytes
 root="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
 max_description=300   # each skill's description plus when_to_use must be under this
 max_total=1200        # all skills together must be under this
+max_body=600          # a pointer fits easily; a copied playbook (2,000+ characters) does not
 failures=0
 total=0
 
@@ -48,6 +49,9 @@ for skill in "${skills[@]}"; do
 
   grep -qF "playbook:$dir\"" "$skill" ||
     fail "$rel: the body must fetch topic \"playbook:$dir\" through nexus_guide"
+  body="$(awk 'fences >= 2 { print } $0 == "---" { fences++ }' "$skill")"
+  [ "${#body}" -lt "$max_body" ] ||
+    fail "$rel: the body is ${#body} characters; keep it under $max_body and fetch the playbook instead of copying it"
 done
 
 [ "$total" -lt "$max_total" ] ||

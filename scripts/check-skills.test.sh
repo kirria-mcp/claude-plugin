@@ -65,6 +65,13 @@ root="$(fixture multiline "a:short")"
 sed -i 's/^description: short$/description: >/' "$root/plugin/skills/a/SKILL.md"
 expect "a folded multi-line description fails" fail "$root" "must be a non-empty single line"
 
+root="$(fixture longbody "a:short")"
+printf '%s\n' "$(chars 600)" >>"$root/plugin/skills/a/SKILL.md"
+expect "a body long enough to be a copied playbook fails" fail "$root" "a/SKILL.md: the body is"
+root="$(fixture shortbody "a:short")"
+printf '%s\n' "$(chars 500)" >>"$root/plugin/skills/a/SKILL.md"
+expect "a body under the cap passes" pass "$root"
+
 mkdir -p "$scratch/empty/plugin/skills"
 expect "a plugin with no skills fails" fail "$scratch/empty" "has no SKILL.md files"
 
