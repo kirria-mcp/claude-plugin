@@ -66,7 +66,7 @@ Tag first: CI fails a marketplace that points at a tag that does not exist yet.
 
 - `.claude-plugin/marketplace.json`: the marketplace and its one plugin entry, including the MCP server.
 - `plugin/`: the plugin content (skills, hooks, commands). It has no `plugin.json`; see `plugin/README.md`.
-- `plugin/skills/`: one skill per Nexus playbook (`work-ticket`, `breakdown-prd`, `qa`, `release`). Each one fetches
+- `plugin/skills/`: one skill per Nexus playbook (`work-ticket`, `breakdown-prd`, `qa`, `release`, `post-mortem`). Each one fetches
   its playbook from your Kirria server through `nexus_guide` when it runs, so the procedure stays current without a
   plugin release.
 - `scripts/check-manifests.sh`: the rules `claude plugin validate` does not check. CI runs both on every pull request.
